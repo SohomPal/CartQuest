@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useState } from "react"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, ShoppingCart, Check, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,8 +12,13 @@ import { useStore } from "@/lib/store-context"
 
 export default function CheckoutPage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   const router = useRouter()
   const { currentStore } = useStore()
+
+  // Parse the cart data from the query parameters
+  const cart = JSON.parse(searchParams.get("cart") || "[]")
+
   const [showBarcode, setShowBarcode] = useState(false)
   const [checkoutComplete, setCheckoutComplete] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
@@ -134,9 +139,8 @@ export default function CheckoutPage() {
     )
   }
 
-  // Calculate totals (mock prices)
-  const itemPrices = challenge.items.map(() => (Math.random() * 10 + 2).toFixed(2))
-  const subtotal = itemPrices.reduce((sum, price) => sum + Number.parseFloat(price), 0)
+  // Calculate totals
+  const subtotal = cart.reduce((sum: any, item: { price: any }) => sum + item.price, 0)
   const tax = subtotal * 0.08
   const total = subtotal + tax
 
@@ -160,41 +164,17 @@ export default function CheckoutPage() {
       {/* Cart Items */}
       <div className="container px-4 py-8">
         <div className="max-w-2xl mx-auto space-y-6">
-          {/* Challenge Info */}
-          <Card className="border-2 bg-gradient-to-r from-[var(--store-gradient-from)]/10 to-[var(--store-gradient-to)]/10">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold mb-1">{challenge.title}</h2>
-                  <p className="text-sm text-muted-foreground">{challenge.description}</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-gradient bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-                    +{challenge.points}
-                  </div>
-                  <p className="text-xs text-muted-foreground">points earned</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Items List */}
+          {/* Cart Items */}
           <Card>
             <CardContent className="p-6 space-y-4">
-              <h3 className="font-bold text-lg mb-4">Items ({challenge.items.length})</h3>
+              <h3 className="font-bold text-lg mb-4">Cart Items</h3>
               <div className="space-y-3">
-                {challenge.items.map((item, index) => (
+                {cart.map((item: { id: Key | null | undefined; name: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; price: number }) => (
                   <div key={item.id} className="flex items-center justify-between py-3 border-b last:border-0">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] flex items-center justify-center">
-                        <Check className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-muted-foreground">{item.category}</p>
-                      </div>
+                    <div>
+                      <p className="font-medium">{item.name}</p>
                     </div>
-                    <p className="font-semibold">${itemPrices[index]}</p>
+                    <p className="font-semibold">${item.price.toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -221,17 +201,18 @@ export default function CheckoutPage() {
               </div>
             </CardContent>
           </Card>
+        </div>
+      </div>
 
-          {/* Checkout Button */}
-          <Button
+       {/* Checkout Button */}
+       <Button
             size="lg"
-            className="w-full bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] text-white text-lg py-6"
+            className="w-30 bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] text-white text-lg py-6"
             onClick={handleCheckout}
           >
             Generate Checkout Barcode
-          </Button>
-        </div>
-      </div>
+        </Button>
+
     </div>
   )
 }

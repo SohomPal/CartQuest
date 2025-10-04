@@ -26,6 +26,7 @@ export default function ChallengePage() {
   const [showHint, setShowHint] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
   const [challengeComplete, setChallengeComplete] = useState(false)
+  const [cart, setCart] = useState<{ id: string; name: string; price: number }[]>([])
 
   if (!challenge) {
     return (
@@ -57,6 +58,12 @@ export default function ChallengePage() {
     setScannerOpen(false)
     setShowConfetti(true)
     setScannedItems((prev) => [...prev, currentItem.id])
+
+    // Add the scanned item to the cart
+    setCart((prev) => [
+      ...prev,
+      { id: currentItem.id, name: currentItem.name, price: currentItem.price },
+    ])
 
     setTimeout(() => {
       setShowConfetti(false)
@@ -97,7 +104,7 @@ export default function ChallengePage() {
             <Button
               size="lg"
               className="w-full bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] text-white"
-              onClick={() => router.push(`/checkout/${challenge.id}`)}
+              onClick={() => router.push(`/checkout/${challenge.id}?cart=${encodeURIComponent(JSON.stringify(cart))}`)}
             >
               Proceed to Checkout
             </Button>
