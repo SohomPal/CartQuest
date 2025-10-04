@@ -29,6 +29,12 @@ def root():
 # generate a shopping list for the upcoming coupon hunt
 @app.get("/shoppinglist")
 def getShoppingList(data: ShoppingListRequest):
+    
+    # first, query snowflake for the last xyz purchases or typical purchases from this date
+    # generate a probability distribution of most likely purchases on today's date
+    # use parameter to randomly include additional/sponsored items in the specified supermarket
+    # return list of N items and their product information
+    
     return {
         "status": "okay",
             "list": {
@@ -48,5 +54,6 @@ def getShoppingList(data: ShoppingListRequest):
 # generate a shopping list for the upcoming coupon hunt
 @app.post("/huntresult")
 def getShoppingList(data: HuntResult):
+    # update user profile with data
     print(f"User {data.user_id} won {data.points} points")
     return {"status": "okay"}
