@@ -11,45 +11,44 @@ import { mockChallenges } from "@/lib/stores"
 import { useStore } from "@/lib/store-context"
 
 export default function CheckoutPage() {
-  const params = useParams()
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const { currentStore } = useStore()
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { currentStore } = useStore();
 
   // Parse the cart data from the query parameters
-  const cart = JSON.parse(searchParams.get("cart") || "[]")
+  const cart = JSON.parse(searchParams.get("cart") || "[]");
 
-  const [showBarcode, setShowBarcode] = useState(false)
-  const [checkoutComplete, setCheckoutComplete] = useState(false)
-  const [showConfetti, setShowConfetti] = useState(false)
+  const [showBarcode, setShowBarcode] = useState(false);
+  const [checkoutComplete, setCheckoutComplete] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [barcodeCode, setBarcodeCode] = useState("");
 
-  const challenge = mockChallenges.find((c) => c.id === params.id)
+  const challenge = mockChallenges.find((c) => c.id === params.id);
 
   if (!challenge) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>Challenge not found</p>
       </div>
-    )
+    );
   }
-
-  // Generate a unique barcode for this checkout
-  const barcodeCode = `${currentStore.id.toUpperCase()}${challenge.id}${Date.now().toString().slice(-6)}`
-  const barcodePattern = barcodeCode
-    .split("")
-    .map((char) => (char.charCodeAt(0) % 2 === 0 ? "1" : "0"))
-    .join("")
 
   const handleCheckout = () => {
-    setShowBarcode(true)
-  }
+    // Generate a barcode based on the cart items
+    const cartBarcode = cart.map((item: { id: any }) => item.id).join("-");
+    setShowBarcode(true);
+
+    // Pass the generated barcode to the BarcodeDisplay component
+    setBarcodeCode(cartBarcode);
+  };
 
   const handleCompleteCheckout = () => {
-    setShowConfetti(true)
+    setShowConfetti(true);
     setTimeout(() => {
-      setCheckoutComplete(true)
-    }, 2000)
-  }
+      setCheckoutComplete(true);
+    }, 2000);
+  };
 
   if (checkoutComplete) {
     return (
@@ -79,7 +78,7 @@ export default function CheckoutPage() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   if (showBarcode) {
@@ -110,7 +109,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="bg-white p-6 rounded-lg border-2 border-dashed border-border">
-                  <BarcodeDisplay code={barcodePattern} />
+                  <BarcodeDisplay code={barcodeCode} />
                 </div>
 
                 <div className="space-y-2 text-sm text-center">
@@ -136,13 +135,13 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Calculate totals
-  const subtotal = cart.reduce((sum: any, item: { price: any }) => sum + item.price, 0)
-  const tax = subtotal * 0.08
-  const total = subtotal + tax
+  const subtotal = cart.reduce((sum: any, item: { price: any }) => sum + item.price, 0);
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
 
   return (
     <div className="min-h-screen bg-background">
@@ -204,15 +203,16 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-       {/* Checkout Button */}
-       <Button
-            size="lg"
-            className="w-30 bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] text-white text-lg py-6"
-            onClick={handleCheckout}
-          >
-            Generate Checkout Barcode
+      {/* Checkout Button */}
+      <div className="flex justify-center items-center py-6">
+        <Button
+          size="lg"
+          className="w-full max-w-sm bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] text-white text-lg py-6"
+          onClick={handleCheckout}
+        >
+          Generate Checkout Barcode
         </Button>
-
+      </div>
     </div>
-  )
+  );
 }
