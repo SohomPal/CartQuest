@@ -1,6 +1,7 @@
 To run:
 
 In terminal 1:
+python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn api:app --reload
