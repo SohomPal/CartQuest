@@ -1,5 +1,6 @@
 # python stuff
 venv/
+__pycache__/
 
 # Logs
 logs
