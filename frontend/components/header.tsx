@@ -18,7 +18,7 @@ export function Header() {
           {/* Logo and Store Selector */}
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] bg-clip-text text-transparent">
-              ShopQuest
+              CouponHunt
             </h1>
             <Button
               variant="outline"
