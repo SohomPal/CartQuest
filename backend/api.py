@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from helpers import updateUserPoints
+import json
 
 # api setup
 app = FastAPI(title="Coupon Hunt API")
@@ -27,8 +28,12 @@ class HuntResult(BaseModel):
 def root():
     return {"status": "Coupon Hunt API is running!"}
 
+@app.get("/points/{user}")
+def getPoints(user: str):
+    return 1200
+
 # generate a shopping list for the upcoming coupon hunt
-@app.get("/shoppinglist")
+@app.post("/shoppinglist")
 def getShoppingList(data: ShoppingListRequest):
     
     # first, query snowflake for the last xyz purchases or typical purchases from this date
@@ -36,21 +41,15 @@ def getShoppingList(data: ShoppingListRequest):
     # use parameter to randomly include additional/sponsored items in the specified supermarket
     # return list of N items and their product information
     
-    return {
-        "status": "okay",
-            "list": {
-                "apple" : {
-                 "brand": "GoldenApples",
-                 "quantity": 2,
-                 "price": 10.00
-                },
-                "banana" : {
-                 "brand": "BrownBananas",
-                 "quantity": 1,
-                 "price": 7.50
-                }
-            }
-    } 
+    with open("mock_challenges.json") as f:
+        challenges = json.load(f)
+    
+    challenge = next((c for c in challenges if c["id"] == data.hunt_id), None)
+    if not challenge:
+        return {"status": "error", "message": "Challenge not found"}
+    
+    # Optionally customize per user
+    return {"status": "okay", "challenge": challenge}
 
 # generate a shopping list for the upcoming coupon hunt
 @app.post("/huntresult")
