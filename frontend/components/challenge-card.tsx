@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Clock, ChevronDown, ChevronUp, Trophy } from "lucide-react"
+import { Clock, ChevronDown, ChevronUp, Trophy, Sparkles } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { Challenge } from "@/lib/stores"
@@ -72,17 +72,30 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
                   <ChevronUp className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
+              <div className="space-y-1.5 max-h-48 overflow-y-auto">
                 {challenge.items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                    className={`flex items-center justify-between p-2.5 rounded-lg transition-colors ${
+                      item.isPromo
+                        ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30"
+                        : "bg-muted/50 hover:bg-muted"
+                    }`}
                   >
-                    <div>
-                      <p className="font-medium text-sm">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.category}</p>
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      {item.isPromo && <Sparkles className="h-3.5 w-3.5 text-amber-500 flex-shrink-0" />}
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">{item.name}</p>
+                        <p className="text-xs text-muted-foreground">{item.category}</p>
+                      </div>
                     </div>
-                    <span className="text-xs text-muted-foreground">{item.location}</span>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <span className={`text-sm font-bold ${item.isPromo ? "text-amber-600" : "text-foreground"}`}>
+                        {item.points}
+                      </span>
+                      {item.isPromo && <span className="text-xs font-bold text-amber-600">2x</span>}
+                      <Trophy className={`h-3.5 w-3.5 ${item.isPromo ? "text-amber-500" : "text-muted-foreground"}`} />
+                    </div>
                   </div>
                 ))}
               </div>

@@ -15,7 +15,10 @@ export default function ChallengePage() {
   const params = useParams()
   const router = useRouter()
   const { addPoints } = useStore()
-  const [challenge, setChallenge] = useState(mockChallenges.find((c) => c.id === params.id))
+  const [challenge, setChallenge] = useState(() => {
+    const foundChallenge = mockChallenges.find((c) => c.id === params.id)
+    return foundChallenge ? { ...foundChallenge, currentPoints: foundChallenge.points } : null
+  })
   const [currentItemIndex, setCurrentItemIndex] = useState(0)
   const [scannedItems, setScannedItems] = useState<string[]>([])
   const [scannerOpen, setScannerOpen] = useState(false)
@@ -36,6 +39,9 @@ export default function ChallengePage() {
   const progress = ((scannedItems.length / challenge.items.length) * 100).toFixed(0)
 
   const handleSwipeLeft = () => {
+    const itemPoints = currentItem.isPromo? currentItem.points * 2 : currentItem.points
+    setChallenge((prev) => (prev ? { ...prev, currentPoints: (prev.currentPoints || prev.points) - itemPoints } : null))
+
     if (currentItemIndex < challenge.items.length - 1) {
       setCurrentItemIndex((prev) => prev + 1)
     } else {
@@ -64,7 +70,7 @@ export default function ChallengePage() {
 
   const handleChallengeComplete = () => {
     setChallengeComplete(true)
-    addPoints(challenge.points)
+    addPoints(challenge.currentPoints || challenge.points)
   }
 
   const handleHint = () => {
@@ -85,7 +91,7 @@ export default function ChallengePage() {
             You collected {scannedItems.length} out of {challenge.items.length} items
           </p>
           <div className="text-3xl font-bold text-gradient bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-            +{challenge.points} points
+            +{challenge.currentPoints || challenge.points} points
           </div>
           <div className="space-y-3">
             <Button
@@ -122,16 +128,21 @@ export default function ChallengePage() {
                 </span>
                 <span className="text-sm font-medium">{progress}%</span>
               </div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <div className="h-3 bg-muted rounded-full overflow-hidden relative">
                 <div
-                  className="h-full bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] transition-all duration-300"
-                  style={{ width: `${progress}%` }}
-                />
+                  className="h-full bg-gradient-to-r from-[var(--store-gradient-from)] via-amber-400 to-[var(--store-gradient-to)] transition-all duration-300 relative"
+                  style={{
+                    width: `${progress}%`,
+                    boxShadow: "0 0 20px rgba(251, 191, 36, 0.6)",
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500">
               <Trophy className="h-4 w-4 text-white" />
-              <span className="font-bold text-white text-sm">{challenge.points}</span>
+              <span className="font-bold text-white text-sm">{challenge.currentPoints || challenge.points}</span>
             </div>
           </div>
         </div>
@@ -139,11 +150,6 @@ export default function ChallengePage() {
 
       {/* Main Content */}
       <div className="container px-4 py-8">
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold mb-2">{challenge.title}</h1>
-          <p className="text-muted-foreground">Swipe to scan or skip items</p>
-        </div>
-
         <SwipeCard
           item={currentItem}
           onSwipeLeft={handleSwipeLeft}

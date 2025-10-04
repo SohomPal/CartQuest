@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { X, Camera, MapPin, HelpCircle } from "lucide-react"
+import { X, Camera, MapPin, HelpCircle, Trophy, Sparkles } from "lucide-react"
 import type { ChallengeItem } from "@/lib/stores"
 
 interface SwipeCardProps {
@@ -51,6 +51,8 @@ export function SwipeCard({ item, onSwipeLeft, onSwipeRight, onHint, onMap }: Sw
   const rotation = dragOffset.x * 0.1
   const opacity = 1 - Math.abs(dragOffset.x) / 300
 
+  const displayPoints = item.isPromo ? item.points * 2 : item.points
+
   return (
     <div className="relative w-full max-w-md mx-auto h-[600px] perspective-1000">
       <div
@@ -72,12 +74,23 @@ export function SwipeCard({ item, onSwipeLeft, onSwipeRight, onHint, onMap }: Sw
         <div className="w-full h-full rounded-3xl bg-gradient-to-br from-card to-card/80 border-2 border-border shadow-2xl overflow-hidden">
           {/* Item Image Placeholder */}
           <div className="h-2/3 bg-gradient-to-br from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] flex items-center justify-center relative">
+            {item.isPromo && (
+              <div className="absolute top-4 right-4 bg-amber-500 text-white px-4 py-2 rounded-full font-bold text-sm flex items-center gap-1.5 shadow-lg animate-pulse">
+                <Sparkles className="h-4 w-4" />
+                2x POINTS
+              </div>
+            )}
+
             <div className="text-white text-center p-8">
               <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
                 <span className="text-6xl">🛒</span>
               </div>
               <h2 className="text-3xl font-bold mb-2 text-balance">{item.name}</h2>
-              <p className="text-lg text-white/90">{item.category}</p>
+              <p className="text-lg text-white/90 mb-4">{item.category}</p>
+              <div className="flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+                <Trophy className="h-5 w-5 text-amber-300" />
+                <span className="text-xl font-bold">{displayPoints} pts</span>
+              </div>
             </div>
 
             {/* Swipe Indicators */}
@@ -100,11 +113,7 @@ export function SwipeCard({ item, onSwipeLeft, onSwipeRight, onHint, onMap }: Sw
           {/* Item Details */}
           <div className="h-1/3 p-6 flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-2 text-muted-foreground mb-4">
-                <MapPin className="h-5 w-5" />
-                <span className="font-medium">{item.location}</span>
-              </div>
-              <p className="text-sm text-muted-foreground">Swipe left to skip, swipe right to scan</p>
+              <p className="text-sm text-muted-foreground text-center">Swipe left to skip, swipe right to scan</p>
             </div>
 
             {/* Action Buttons */}
