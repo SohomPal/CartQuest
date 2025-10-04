@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1",
+    "title": "Quick Breakfast Run",
+    "description": "Grab essentials for a healthy breakfast",
+    "points": 250,
+    "items": [
+      { "id": "1", "name": "Organic Eggs", "category": "Dairy", "location": "Aisle 3, Left", "points": 50 },
+      { "id": "2", "name": "Whole Wheat Bread", "category": "Bakery", "location": "Aisle 7, Center", "points": 60 }
+    ]
+  }
+]
