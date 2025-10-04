@@ -1,3 +1,6 @@
+# python stuff
+venv/
+
 # Logs
 logs
 *.log
