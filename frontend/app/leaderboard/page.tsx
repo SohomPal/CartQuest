@@ -29,7 +29,7 @@ const allTimeLeaderboard: LeaderboardEntry[] = [
   { rank: 1, name: "Mike Johnson", points: 18750, challengesCompleted: 87, avatar: "👨" },
   { rank: 2, name: "Sarah Chen", points: 17920, challengesCompleted: 82, avatar: "👩" },
   { rank: 3, name: "Emily Davis", points: 16340, challengesCompleted: 76, avatar: "👩" },
-  { rank: 4, name: "Risha Patel", points: 15680, challengesCompleted: 71, avatar: "👤" },
+  { rank: 4, name: "Risha Makhijani", points: 15680, challengesCompleted: 71, avatar: "👤" },
   { rank: 5, name: "James Wilson", points: 14920, challengesCompleted: 68, avatar: "👨" },
   { rank: 6, name: "Lisa Anderson", points: 13850, challengesCompleted: 64, avatar: "👩" },
   { rank: 7, name: "David Lee", points: 12740, challengesCompleted: 59, avatar: "👨" },

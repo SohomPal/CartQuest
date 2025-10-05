@@ -35,7 +35,7 @@ export function Header() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <h1 className="text-3xl font-bold" style={{ color: currentStore.colors.primary }}>
-                  CouponHunt{/* {currentStore.name} */}
+                  CartQuest{/* {currentStore.name} */}
                 </h1>
                 <span
                   className="px-2 py-0.5 text-xs font-bold text-white rounded"
