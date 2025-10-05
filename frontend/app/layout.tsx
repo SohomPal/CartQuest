@@ -6,9 +6,10 @@ import { Suspense } from "react"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "CouponHunt - Gamified Shopping",
+  title: "CartQuest - Gamified Shopping",
   description: "Shopping Made Fun",
   generator: "v0.app",
+  icons: "./favicon.ico",
 }
 
 export default function RootLayout({
