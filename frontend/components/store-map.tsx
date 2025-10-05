@@ -11,6 +11,18 @@ interface StoreMapProps {
   onClose: () => void
   currentItem?: ChallengeItem
 }
+
+const anchorBySection: Record<string, { left: string; top: string }> = {
+  produce:   { left: "22%", top: "10%" },
+  dairy:     { left: "5%", top: "45%" },
+  meat:      { left: "8%", top: "82%" },
+  bakery:    { left: "18%", top: "88%" },
+  pantry:    { left: "55%", top: "40%" },
+  snacks:    { left: "75%", top: "66%" },
+  beverages: { left: "38%", top: "70%" },
+  health:    { left: "88%", top: "86%" },
+}
+
 // ...existing code...
 export function StoreMap(props: StoreMapProps) {
   const { isOpen, onClose, currentItem } = props
@@ -20,7 +32,7 @@ export function StoreMap(props: StoreMapProps) {
   const sections = [
     { id: "produce", name: "Produce", position: "top-4 left-4", color: "bg-green-500" },
     { id: "dairy", name: "Dairy", position: "top-4 right-4", color: "bg-blue-500" },
-    { id: "meat", name: "Meat", position: "top-1/3 left-4", color: "bg-red-500" },
+    { id: "meat", name: "Meat", position: "bottom-4 right-4", color: "bg-red-500" },
     { id: "bakery", name: "Bakery", position: "top-1/3 right-4", color: "bg-amber-500" },
     { id: "pantry", name: "Pantry", position: "top-2/3 left-1/4", color: "bg-purple-500" },
     { id: "snacks", name: "Snacks", position: "top-2/3 right-1/4", color: "bg-pink-500" },
@@ -37,14 +49,16 @@ export function StoreMap(props: StoreMapProps) {
     if (location.includes("dairy") || category.includes("dairy")) return "dairy"
     if (location.includes("meat") || category.includes("meat")) return "meat"
     if (location.includes("bakery") || category.includes("bakery")) return "bakery"
-    if (location.includes("pantry") || location.includes("aisle") || category.includes("pantry")) return "pantry"
-    if (location.includes("snack") || category.includes("snack")) return "snacks"
-    if (location.includes("beverage") || location.includes("drink") || category.includes("beverage")) return "beverages"
-    if (location.includes("health") || location.includes("pharmacy") || category.includes("health")) return "health"
+    if (location.includes("pantry") || category.includes("pantry")) return "pantry"
+    if (location.includes("snacks") || category.includes("snacks")) return "snacks"
+    if (location.includes("beverage") || category.includes("beverage") || category.includes("beverage")) return "beverages"
+    if (location.includes("health") || category.includes("health") || category.includes("health")) return "health"
     return null
   }
 
   const activeSectionId = getSectionIdForItem(currentItem)
+  const activeSection = sections.find(s => s.id === activeSectionId) || null
+  const anchor = activeSectionId ? anchorBySection[activeSectionId] : null
 
   return (
     <div className="fixed bottom-0 left-1/2 z-50 -translate-x-1/2 w-full">
@@ -70,29 +84,21 @@ export function StoreMap(props: StoreMapProps) {
     />
 
     {/* Marker overlay lives inside the same relative box */}
-    {activeSectionId && (() => {
-      const section = sections.find(s => s.id === activeSectionId)!
-      // Example: if you move to % coords, center with translate
-      return (
+    {activeSection && anchor && (
         <div
           className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
-          style={{ left: '18%', top: '12%' }} // <-- your coords
+          style={{ left: anchor.left, top: anchor.top }}
         >
           {/* HALO */}
           <span
-            className={`absolute -inset-7 ${section.color} rounded-full opacity-35 blur-md mix-blend-multiply`}
-            style={{ animation: "huntPulse 2.4s cubic-bezier(.22,.61,.36,1) infinite" }}
+            className={`absolute -inset-7 ${activeSection.color} rounded-full opacity-35 blur-md mix-blend-multiply`}
+            style={{ animation: "huntPulse 1.5s cubic-bezier(.12,.61,.86,1) infinite" }}
             aria-hidden
           />
           {/* CORE */}
-          <div className={`${section.color} w-7 h-7 rounded-full shadow-lg`} title={section.name} />
-          {/* LABEL */}
-          <div className="mt-1 rounded-full bg-white/85 backdrop-blur px-2 py-0.5 text-xs font-medium text-gray-800 border">
-            {section.name}
-          </div>
+          <div className={`${activeSection.color} w-7 h-7 rounded-full shadow-lg opacity-50`} title={activeSection.name} />
         </div>
-          )
-        })()}
+      )}
       </div>
     </div>
 
