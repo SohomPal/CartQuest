@@ -152,6 +152,11 @@
   --sidebar-ring: #666666;
 }
 
+/* Remove the next js overlay */
+nextjs-portal {
+  display: none;
+}
+
 /* Updated font stack to Helvetica Neue as specified */
 @theme inline {
   --font-sans: "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
