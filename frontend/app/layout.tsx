@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "CartQuest - Gamified Shopping",
   description: "Shopping Made Fun",
   generator: "v0.app",
+  icons: "./favicon.ico",
 }
 
 export default function RootLayout({
