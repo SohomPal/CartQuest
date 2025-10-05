@@ -1,10 +1,13 @@
+"use client"
 import { Header } from "@/components/header"
 import { ChallengeCard } from "@/components/challenge-card"
 import { mockChallenges } from "@/lib/stores"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function HomePage() {
+  const router = useRouter()
   return (
     <div className="min-h-screen bg-[var(--store-bg)]">
       <Header />
@@ -25,6 +28,10 @@ export default function HomePage() {
             </p>
             <Button
               size="lg"
+              variant="ghost"
+              onClick={() => {
+                router.push(`/challenge/${mockChallenges[0].id}`) // by default start with the first available challenge
+              }}
               className="bg-white text-[var(--store-primary)] hover:brightness-95 font-semibold shadow-lg"
             >
               Start Shopping Quests
