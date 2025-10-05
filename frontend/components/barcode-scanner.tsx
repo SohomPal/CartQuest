@@ -39,9 +39,6 @@ export function BarcodeScanner({ open, onClose, onScan, itemName, itemPoints }: 
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold">Scan Barcode</h3>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-5 w-5" />
-            </Button>
           </div>
 
           {/* Camera View Simulation */}
