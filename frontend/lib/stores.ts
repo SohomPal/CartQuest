@@ -183,7 +183,7 @@ export const mockChallenges: Challenge[] = [
       {
         id: "11",
         name: "Chocolate Bar",
-        category: "Candy",
+        category: "Snacks",
         location: "Aisle 9, Left",
         points: 50,
         isPromo: true,

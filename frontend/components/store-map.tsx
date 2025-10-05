@@ -18,7 +18,7 @@ const anchorBySection: Record<string, { left: string; top: string }> = {
   meat:      { left: "8%", top: "82%" },
   bakery:    { left: "18%", top: "88%" },
   pantry:    { left: "55%", top: "40%" },
-  snacks:    { left: "75%", top: "66%" },
+  snacks:    { left: "60%", top: "46%" },
   beverages: { left: "38%", top: "70%" },
   health:    { left: "88%", top: "86%" },
 }
