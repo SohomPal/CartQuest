@@ -64,33 +64,7 @@ export const stores: Store[] = [
       surface: "#FFFFFF",
       accent: "#EAF7E9",
     },
-  },
-  {
-    id: "walmart",
-    name: "Walmart",
-    theme: "walmart",
-    logo: "⭐",
-    colors: {
-      primary: "#FFD100",
-      secondary: "#000000",
-      bg: "#FFFFFF",
-      surface: "#F5F5F5",
-      accent: "#FFA500",
-    },
-  },
-  {
-    id: "target",
-    name: "Target",
-    theme: "target",
-    logo: "🎯",
-    colors: {
-      primary: "#FF0000",
-      secondary: "#FFFFFF",
-      bg: "#F9F9F9",
-      surface: "#FFFFFF",
-      accent: "#FFA500",
-    },
-  },
+  }
 ]
 
 export interface ChallengeItem {
