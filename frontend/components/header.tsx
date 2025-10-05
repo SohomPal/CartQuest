@@ -162,12 +162,12 @@ export function Header() {
               <Link href="/leaderboard">
                 <button
                   className={`text-sm font-medium transition-colors relative h-full ${
-                    activeTab === "weekly-leaderboard" ? "text-gray-900" : "text-gray-600 hover:text-gray-900"
+                    activeTab === "leaderboard" ? "text-gray-900" : "text-gray-600 hover:text-gray-900"
                   }`}
-                  onClick={() => setActiveTab("weekly-leaderboard")}
+                  onClick={() => setActiveTab("leaderboard")}
                 >
-                  Weekly Leaderboard
-                  {activeTab === "weekly-leaderboard" && (
+                  Leaderboard
+                  {activeTab === "leaderboard" && (
                     <div
                       className="absolute bottom-0 left-0 right-0 h-0.5"
                       style={{ backgroundColor: currentStore.colors.primary }}
