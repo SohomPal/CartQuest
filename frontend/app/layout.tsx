@@ -6,8 +6,8 @@ import { Suspense } from "react"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "ShopQuest - Gamified Grocery Shopping",
-  description: "Turn your grocery shopping into an exciting challenge",
+  title: "CouponHunt - Gamified Shopping",
+  description: "Shopping Made Fun",
   generator: "v0.app",
 }
 

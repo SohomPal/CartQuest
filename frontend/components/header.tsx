@@ -26,7 +26,7 @@ export function Header() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <h1 className="text-3xl font-bold" style={{ color: currentStore.colors.primary }}>
-                  {currentStore.name}
+                  CouponHunt{/* {currentStore.name} */}
                 </h1>
                 <span
                   className="px-2 py-0.5 text-xs font-bold text-white rounded"
@@ -150,7 +150,7 @@ export function Header() {
                   }`}
                   onClick={() => setActiveTab("shoprite-live")}
                 >
-                  ShopRite Live
+                  Challenges
                   {activeTab === "shoprite-live" && (
                     <div
                       className="absolute bottom-0 left-0 right-0 h-0.5"
