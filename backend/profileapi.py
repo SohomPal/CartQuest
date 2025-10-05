@@ -1,18 +1,31 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import datetime
+from datetime import datetime, timezone
 import snowflake.connector
 from snowflake.connector import DictCursor
 import os
 from contextlib import contextmanager
 import uuid
 from dotenv import load_dotenv
+import json
+
 
 # Load environment variables
 load_dotenv()
 
 app = FastAPI(title="Grocery Store User Profile API", version="1.0.0")
+
+# If you’re mounting sub-apps/routers, put this on the sub-app too.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],          # or ["http://localhost:3000"] for tighter security
+    allow_credentials=True,
+    allow_methods=["*"],          # includes OPTIONS automatically
+    allow_headers=["*"],          # e.g. Content-Type
+)
 
 # Pydantic models for request/response
 class UserProfile(BaseModel):
@@ -47,10 +60,21 @@ class Purchase(BaseModel):
     items: List[dict]  # List of purchased items
     purchase_date: datetime
     
+# class PurchaseCreate(BaseModel):
+#     store_location: str
+#     total_amount: float
+#     items: List[dict]
+
+class LineItem(BaseModel):
+    id: str               # allow numeric ids from cart
+    name: str
+    quantity: int = Field(ge=1)
+    price: float          # allow ints or floats
+
 class PurchaseCreate(BaseModel):
     store_location: str
     total_amount: float
-    items: List[dict]
+    items: List[LineItem]
 
 # Snowflake connection configuration
 SNOWFLAKE_CONFIG = {
@@ -265,36 +289,62 @@ async def update_user_points(user_id: str, points_data: PointsUpdate):
 
 # Purchase History Management
 @app.post("/users/{user_id}/purchases", response_model=Purchase)
-async def create_purchase(user_id: str, purchase_data: PurchaseCreate):
-    """Create a new purchase record"""
+def create_purchase(user_id: str, purchase_data: PurchaseCreate):
     purchase_id = str(uuid.uuid4())
-    current_time = datetime.now()
-    
-    with get_snowflake_connection() as conn:
-        cursor = conn.cursor(DictCursor)
-        
-        # Check if user exists
-        cursor.execute("SELECT user_id FROM users WHERE user_id = %s", (user_id,))
-        if not cursor.fetchone():
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        # Insert purchase record
-        cursor.execute("""
-            INSERT INTO purchases (purchase_id, user_id, store_location, total_amount, items, purchase_date)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (purchase_id, user_id, purchase_data.store_location, purchase_data.total_amount, 
-              purchase_data.items, current_time))
-        
-        conn.commit()
-        
+    current_time = datetime.now(timezone.utc)
+
+    # --- Normalize items to a JSON string (critical) ---
+    def to_plain(x):
+        return x.model_dump() if hasattr(x, "model_dump") else (x.dict() if hasattr(x, "dict") else x)
+    items_plain = [to_plain(i) for i in purchase_data.items]
+    items_json: str = json.dumps(items_plain)  # <-- must be a STRING
+
+    # --- Prepare safe, scalar params ---
+    pid = str(purchase_id)
+    uid = str(user_id)
+    loc = str(purchase_data.store_location)
+    total = float(purchase_data.total_amount)
+    items_json_str = str(items_json)
+    ts = current_time
+
+    # Runtime sanity check: no dicts/lists slip through
+    for idx, p in enumerate((pid, uid, loc, total, items_json_str, ts), start=1):
+        if isinstance(p, (list, dict)):
+            raise HTTPException(
+                status_code=500,
+                detail=f"Param {idx} is not scalar (type={type(p).__name__})."
+            )
+
+    try:
+        with get_snowflake_connection() as conn:
+            with conn.cursor(DictCursor) as cursor:
+                # Confirm user exists
+                cursor.execute("SELECT user_id FROM users WHERE user_id = %s", (uid,))
+                if not cursor.fetchone():
+                    raise HTTPException(status_code=404, detail="User not found")
+
+                # ✅ Use INSERT ... SELECT so PARSE_JSON is allowed
+                sql = """
+                    INSERT INTO purchases
+                      (purchase_id, user_id, store_location, total_amount, items, purchase_date)
+                    SELECT %s, %s, %s, %s, PARSE_JSON(%s), %s
+                """
+                params = (pid, uid, loc, total, items_json_str, ts)
+                cursor.execute(sql, params)
+                conn.commit()
+
         return Purchase(
-            purchase_id=purchase_id,
-            user_id=user_id,
-            store_location=purchase_data.store_location,
-            total_amount=purchase_data.total_amount,
-            items=purchase_data.items,
-            purchase_date=current_time
+            purchase_id=pid,
+            user_id=uid,
+            store_location=loc,
+            total_amount=total,
+            items=items_plain,
+            purchase_date=ts,
         )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"DB error: {e}")
 
 @app.get("/users/{user_id}/purchases", response_model=List[Purchase])
 async def get_purchase_history(user_id: str, limit: int = 50):
