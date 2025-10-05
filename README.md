@@ -2,6 +2,10 @@ CartQuest makes shopping fun by letting you complete scavenger hunt-like challen
 
 Completed for HackRU2025.
 
+
+https://github.com/user-attachments/assets/bf03d392-a71e-48be-8aa3-1d1e5a8e8a09
+
+
 To run locally:
 
 In terminal 1:
