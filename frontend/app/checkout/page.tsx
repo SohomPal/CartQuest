@@ -14,6 +14,7 @@ export default function CheckoutPage() {
   const [checkoutComplete, setCheckoutComplete] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
 
+  const [earnedPoints, setEarnedPoints] = useState(0)
   const totalPoints = getTotalCartPoints()
   const scannedItems = cart.filter((item) => item.status === "scanned")
   const skippedItems = cart.filter((item) => item.status === "skipped")
@@ -73,42 +74,27 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleCompleteCheckout = async () => {
-    setShowConfetti(true);
+ const handleCompleteCheckout = async () => {
+    setShowConfetti(true)
+
+    // take a snapshot BEFORE any async/clearing
+    const pointsSnapshot = getTotalCartPoints()
+    setEarnedPoints(pointsSnapshot)
 
     try {
-      await savePurchaseAndPoints(cart, totalPoints, currentStore.name);
-      setCheckoutComplete(true);
-      clearCart();
-        router.push("/");
+      console.log(`Points snapsnot: ${pointsSnapshot}`)
+      await savePurchaseAndPoints(cart, pointsSnapshot, currentStore.name)
+      setCheckoutComplete(true)
     } catch (error) {
-      console.error("Checkout failed:", error);
+      console.error("Checkout failed:", error)
+      // still show success if you want that UX:
+      setCheckoutComplete(true)
+    } finally {
+      clearCart()
     }
-  };
-
-  if (cart.length === 0) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: currentStore.colors.bg }}
-      >
-        <div className="text-center space-y-4 max-w-md px-4">
-          <ShoppingCart className="w-24 h-24 mx-auto text-muted-foreground" />
-          <h1 className="text-3xl font-bold">Your cart is empty</h1>
-          <p className="text-muted-foreground">Complete some challenges to add items to your cart!</p>
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] text-white"
-            onClick={() => router.push("/")}
-          >
-            Browse Challenges
-          </Button>
-        </div>
-      </div>
-    )
   }
 
-  if (checkoutComplete) {
+if (checkoutComplete) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
@@ -121,7 +107,7 @@ export default function CheckoutPage() {
           </div>
           <h1 className="text-4xl font-bold text-balance">Checkout Complete!</h1>
           <p className="text-xl text-muted-foreground text-pretty">
-            You earned <span className="font-bold text-[var(--store-primary)]">{totalPoints} points</span> from your
+            You earned <span className="font-bold text-[var(--store-primary)]">{earnedPoints} points</span> from your
             shopping!
           </p>
           <div className="flex flex-col gap-3 pt-4">
@@ -141,6 +127,28 @@ export default function CheckoutPage() {
               View Leaderboard
             </Button>
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (cart.length === 0) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: currentStore.colors.bg }}
+      >
+        <div className="text-center space-y-4 max-w-md px-4">
+          <ShoppingCart className="w-24 h-24 mx-auto text-muted-foreground" />
+          <h1 className="text-3xl font-bold">Your cart is empty</h1>
+          <p className="text-muted-foreground">Complete some challenges to add items to your cart!</p>
+          <Button
+            size="lg"
+            className="bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] text-white"
+            onClick={() => router.push("/")}
+          >
+            Browse Challenges
+          </Button>
         </div>
       </div>
     )
