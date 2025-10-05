@@ -314,7 +314,7 @@ export default function ChallengePage() {
         itemPoints={currentItem.isPromo ? currentItem.points * 2 : currentItem.points}
       />
 
-      <StoreMap isOpen={mapOpen} onClose={() => setMapOpen(false)} challengeItems={challenge.items} />
+  <StoreMap isOpen={mapOpen} onClose={() => setMapOpen(false)} currentItem={currentItem} />
     </div>
   )
 }
