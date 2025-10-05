@@ -15,9 +15,9 @@ interface LeaderboardEntry {
 }
 
 const weeklyLeaderboard: LeaderboardEntry[] = [
-  { rank: 1, name: "Sarah Chen", points: 2850, challengesCompleted: 12, avatar: "👩", trend: "up" },
-  { rank: 2, name: "Mike Johnson", points: 2640, challengesCompleted: 11, avatar: "👨", trend: "same" },
-  { rank: 3, name: "Risha Patel", points: 2420, challengesCompleted: 10, avatar: "👤", trend: "up" },
+  { rank: 1, name: "Risha Makhijani", points: 3120, challengesCompleted: 10, avatar: "👤", trend: "up" },
+  { rank: 2, name: "Sarah Chen", points: 2850, challengesCompleted: 12, avatar: "👩", trend: "up" },
+  { rank: 3, name: "Mike Coxlong", points: 2640, challengesCompleted: 11, avatar: "👨", trend: "same" },
   { rank: 4, name: "Emily Davis", points: 2180, challengesCompleted: 9, avatar: "👩", trend: "down" },
   { rank: 5, name: "James Wilson", points: 1950, challengesCompleted: 8, avatar: "👨", trend: "up" },
   { rank: 6, name: "Lisa Anderson", points: 1820, challengesCompleted: 8, avatar: "👩", trend: "same" },
@@ -154,13 +154,13 @@ export default function LeaderboardPage() {
               </h3>
               <div className="space-y-4">
                 <div className="text-center p-4 bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] rounded-lg text-white">
-                  <div className="text-3xl font-bold">{activeTab === "weekly" ? "2,420" : "15,680"}</div>
+                  <div className="text-3xl font-bold">{activeTab === "weekly" ? "3,120" : "15,680"}</div>
                   <div className="text-sm opacity-90 mt-1">Current Points</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center p-3 bg-background rounded-lg">
-                    <div className="text-2xl font-bold text-[var(--store-primary)]">#3</div>
+                    <div className="text-2xl font-bold text-[var(--store-primary)]">#1</div>
                     <div className="text-xs text-muted-foreground mt-1">Rank</div>
                   </div>
                   <div className="text-center p-3 bg-background rounded-lg">

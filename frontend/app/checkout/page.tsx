@@ -24,14 +24,44 @@ export default function CheckoutPage() {
     .map((char) => (char.charCodeAt(0) % 2 === 0 ? "1" : "0"))
     .join("")
 
-  const handleCompleteCheckout = () => {
-    setShowConfetti(true)
-    addPoints(totalPoints)
+  const handleCompleteCheckout = async () => {
+    setShowConfetti(true);
+    addPoints(totalPoints);
+  
+    // Prepare the payload for the API request
+    const payload = {
+      userId: "rmm374",
+      items: cart.map((item) => ({
+        id: item.id,
+        name: item.name,
+        quantity: 1,
+        price: item.price,
+      })),
+    };
+  
+    try {
+      // Call the backend API to save the purchase
+      const response = await fetch("http://localhost:8080/huntresult", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        console.error("Failed to save purchase:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error saving purchase:", error);
+    }
+  
+    // Complete the checkout process
     setTimeout(() => {
-      setCheckoutComplete(true)
-      clearCart()
-    }, 1500)
-  }
+      setCheckoutComplete(true);
+      clearCart();
+    }, 1500);
+  };
 
   if (cart.length === 0) {
     return (
