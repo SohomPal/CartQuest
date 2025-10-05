@@ -8,12 +8,21 @@ import { useStore } from "@/lib/store-context"
 import { StoreSelector } from "./store-selector"
 import { CartDropdown } from "./cart-dropdown"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export function Header() {
   const { currentStore, userPoints, cart } = useStore()
   const [storeSelectorOpen, setStoreSelectorOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("shoprite-live")
+  const pathname = usePathname()
+  const currentTab =
+    pathname === "/leaderboard"
+      ? "leaderboard"
+      : pathname === "/weekly-ad"
+      ? "weekly-ad"
+      : pathname === "/digital-coupons"
+      ? "digital-coupons"
+      : "shoprite-live"
 
   const scannedItemsCount = cart.filter((item) => item.status === "scanned").length
 
@@ -142,16 +151,16 @@ export function Header() {
         <div className="border-t border-gray-200 bg-white">
           <div className="container mx-auto px-4">
             <nav className="flex items-center gap-8 h-12">
-              {/* ShopRite Live and Weekly Leaderboard first */}
               <Link href="/">
                 <button
                   className={`text-sm font-medium transition-colors relative h-full ${
-                    activeTab === "shoprite-live" ? "text-gray-900" : "text-gray-600 hover:text-gray-900"
+                    currentTab === "shoprite-live"
+                      ? "text-gray-900"
+                      : "text-gray-600 hover:text-gray-900"
                   }`}
-                  onClick={() => setActiveTab("shoprite-live")}
                 >
                   Challenges
-                  {activeTab === "shoprite-live" && (
+                  {currentTab === "shoprite-live" && (
                     <div
                       className="absolute bottom-0 left-0 right-0 h-0.5"
                       style={{ backgroundColor: currentStore.colors.primary }}
@@ -159,15 +168,17 @@ export function Header() {
                   )}
                 </button>
               </Link>
+
               <Link href="/leaderboard">
                 <button
                   className={`text-sm font-medium transition-colors relative h-full ${
-                    activeTab === "leaderboard" ? "text-gray-900" : "text-gray-600 hover:text-gray-900"
+                    currentTab === "leaderboard"
+                      ? "text-gray-900"
+                      : "text-gray-600 hover:text-gray-900"
                   }`}
-                  onClick={() => setActiveTab("leaderboard")}
                 >
                   Leaderboard
-                  {activeTab === "leaderboard" && (
+                  {currentTab === "leaderboard" && (
                     <div
                       className="absolute bottom-0 left-0 right-0 h-0.5"
                       style={{ backgroundColor: currentStore.colors.primary }}
@@ -175,34 +186,42 @@ export function Header() {
                   )}
                 </button>
               </Link>
-              <button
-                className={`text-sm font-medium transition-colors relative h-full ${
-                  activeTab === "weekly-ad" ? "text-gray-900" : "text-gray-600 hover:text-gray-900"
-                }`}
-                onClick={() => setActiveTab("weekly-ad")}
-              >
-                Weekly Ad
-                {activeTab === "weekly-ad" && (
-                  <div
-                    className="absolute bottom-0 left-0 right-0 h-0.5"
-                    style={{ backgroundColor: currentStore.colors.primary }}
-                  />
-                )}
-              </button>
-              <button
-                className={`text-sm font-medium transition-colors relative h-full ${
-                  activeTab === "digital-coupons" ? "text-gray-900" : "text-gray-600 hover:text-gray-900"
-                }`}
-                onClick={() => setActiveTab("digital-coupons")}
-              >
-                Digital Coupons
-                {activeTab === "digital-coupons" && (
-                  <div
-                    className="absolute bottom-0 left-0 right-0 h-0.5"
-                    style={{ backgroundColor: currentStore.colors.primary }}
-                  />
-                )}
-              </button>
+
+              <Link href="/weekly-ad">
+                <button
+                  className={`text-sm font-medium transition-colors relative h-full ${
+                    currentTab === "weekly-ad"
+                      ? "text-gray-900"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Weekly Ad
+                  {currentTab === "weekly-ad" && (
+                    <div
+                      className="absolute bottom-0 left-0 right-0 h-0.5"
+                      style={{ backgroundColor: currentStore.colors.primary }}
+                    />
+                  )}
+                </button>
+              </Link>
+
+              <Link href="/digital-coupons">
+                <button
+                  className={`text-sm font-medium transition-colors relative h-full ${
+                    currentTab === "digital-coupons"
+                      ? "text-gray-900"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Digital Coupons
+                  {currentTab === "digital-coupons" && (
+                    <div
+                      className="absolute bottom-0 left-0 right-0 h-0.5"
+                      style={{ backgroundColor: currentStore.colors.primary }}
+                    />
+                  )}
+                </button>
+              </Link>
             </nav>
           </div>
         </div>
