@@ -38,7 +38,7 @@ export default function CheckoutPage() {
 
     try {
       // Save the purchase
-      const purchaseResponse = await fetch("http://localhost:8000/users/rmm374/purchases", {
+      const purchaseResponse = await fetch("http://localhost:8000/users/b6cc0eee-0d42-4a21-af11-976949ccc84b/purchases", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
