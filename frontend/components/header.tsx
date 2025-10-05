@@ -15,14 +15,16 @@ export function Header() {
   const [storeSelectorOpen, setStoreSelectorOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
   const pathname = usePathname()
-  const currentTab =
-    pathname === "/leaderboard"
-      ? "leaderboard"
-      : pathname === "/weekly-ad"
-      ? "weekly-ad"
-      : pathname === "/digital-coupons"
-      ? "digital-coupons"
-      : "shoprite-live"
+  const normalized = pathname.replace(/\/$/, "") // remove trailing slash
+
+const currentTab =
+  normalized.startsWith("/leaderboard")
+    ? "leaderboard"
+    : normalized.startsWith("/weekly-ad")
+    ? "weekly-ad"
+    : normalized.startsWith("/digital-coupons")
+    ? "digital-coupons"
+    : "shoprite-live"
 
   const scannedItemsCount = cart.filter((item) => item.status === "scanned").length
 
@@ -179,24 +181,6 @@ export function Header() {
                 >
                   Leaderboard
                   {currentTab === "leaderboard" && (
-                    <div
-                      className="absolute bottom-0 left-0 right-0 h-0.5"
-                      style={{ backgroundColor: currentStore.colors.primary }}
-                    />
-                  )}
-                </button>
-              </Link>
-
-              <Link href="/weekly-ad">
-                <button
-                  className={`text-sm font-medium transition-colors relative h-full ${
-                    currentTab === "weekly-ad"
-                      ? "text-gray-900"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  Weekly Ad
-                  {currentTab === "weekly-ad" && (
                     <div
                       className="absolute bottom-0 left-0 right-0 h-0.5"
                       style={{ backgroundColor: currentStore.colors.primary }}
