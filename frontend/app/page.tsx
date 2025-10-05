@@ -53,11 +53,11 @@ export default function HomePage() {
         </div>
 
         <div className="container px-4 py-8 md:py-12 max-w-7xl mx-auto">
-          {error && (
+          {/* {error && (
             <div className="mb-4 rounded-lg bg-red-50 text-red-700 p-3 text-sm">
               Couldn’t load remote challenges (4–6): {error}. Showing local ones only.
             </div>
-          )}
+          )} */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {allChallenges.map((challenge) => (
               <ChallengeCard key={challenge.id} challenge={challenge} />

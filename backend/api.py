@@ -6,7 +6,7 @@ from datetime import datetime
 import math
 import random
 
-PROMO_DEFAULT = 0.5
+PROMO_DEFAULT = 0
 
 app = FastAPI(title="Coupon Hunt API")
 app.add_middleware(
