@@ -190,9 +190,9 @@ export default function ChallengePage() {
                       </div>
                       <div className="text-right">
                         {isScanned ? (
-                          <span className="text-green-600 font-bold text-sm">+{itemPoints} pts</span>
+                          <span className="text-green-600 font-bold text-sm">+{itemPoints} points</span>
                         ) : (
-                          <span className="text-gray-400 font-medium text-sm">−{itemPoints} potential</span>
+                          <span className="text-gray-400 font-medium text-sm">0 points</span>
                         )}
                       </div>
                     </div>
@@ -276,7 +276,7 @@ export default function ChallengePage() {
       {skipPenalty !== null && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-float-up">
           <div className="bg-red-500 text-white px-4 py-2 rounded-full font-bold shadow-lg">
-            −{skipPenalty} potential
+            0 points
           </div>
         </div>
       )}
@@ -284,7 +284,7 @@ export default function ChallengePage() {
       {pointsToast !== null && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-float-up">
           <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-full font-bold shadow-lg text-lg">
-            +{pointsToast} pts
+            +{pointsToast} points
           </div>
         </div>
       )}

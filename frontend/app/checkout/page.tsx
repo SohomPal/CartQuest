@@ -165,7 +165,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                     <span className={`font-bold ${item.status === "scanned" ? "text-green-600" : "text-gray-400"}`}>
-                      {item.status === "scanned" ? `+${item.earnedPoints}` : "—"}
+                      {item.status === "scanned" ? `+${item.earnedPoints}` : "0"}
                     </span>
                   </div>
                 ))}
