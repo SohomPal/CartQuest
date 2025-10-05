@@ -1,4 +1,5 @@
-CartQuest makes shopping fun by letting you complete scavenger hunt-like challenges, compete with friends, and win points that can be redeemed for coupons, gift cards, and more.
+# CardQuest
+**CartQuest makes shopping fun** by letting you complete scavenger hunt-like challenges, compete with friends, and win points that can be redeemed for coupons, gift cards, and more.
 
 Completed for HackRU2025.
 
