@@ -80,6 +80,7 @@ export default function CheckoutPage() {
       await savePurchaseAndPoints(cart, totalPoints, currentStore.name);
       setCheckoutComplete(true);
       clearCart();
+        router.push("/");
     } catch (error) {
       console.error("Checkout failed:", error);
     }
