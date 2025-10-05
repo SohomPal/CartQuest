@@ -1,59 +1,73 @@
-# run with uvicorn main:app --reload
+from typing import List, Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from helpers import updateUserPoints
-import json
+from pydantic import BaseModel, Field
 
-# api setup
+# ------------- FastAPI app + CORS -------------
 app = FastAPI(title="Coupon Hunt API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], #firefox/chrome throws errors without this
+    allow_origins=["*"],   # dev-friendly; tighten for prod
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-class ShoppingListRequest(BaseModel):
-    hunt_id: str
-    user_id: str
+# ------------- Models (camelCase where you asked) -------------
+class CartItem(BaseModel):
+    id: str
+    name: str
+    category: str
+    location: str
+    points: int
+    price: float
+    isPromo: Optional[bool] = None
 
 class HuntResult(BaseModel):
-    hunt_id: str
-    user_id: str
-    points: int
+    # Keep the camelCase keys you requested
+    userId: str = Field(..., description="User ID")
+    shoppingCart: List[CartItem] = Field(default_factory=list)
 
+# ------------- Health check -------------
 @app.get("/")
 def root():
     return {"status": "Coupon Hunt API is running!"}
 
-@app.get("/points/{user}")
-def getPoints(user: str):
-    return 1200
+# ------------- GET /shoppinglist -------------
+# Accepts userId as a query parameter (e.g., /shoppinglist?userId=risha123)
+@app.get("/shoppinglist")
+def get_shopping_list(userId: str):
+    """
+    TODO (later):
+      - query snowflake for last xyz purchases / typical purchases by date
+      - generate probability distribution of likely purchases today
+      - include additional/sponsored items based on store parameter
+      - return list of N items + product info
+    For now: return a generic list.
+    """
+    return {
+        "status": "okay",
+        "userId": userId,
+        "list": [
+            { "id": "22", "name": "All-Purpose Flour", "category": "Baking", "location": "Aisle 8, Left",   "points": 100, "price": 3.49 },
+            { "id": "23", "name": "Sugar",             "category": "Baking", "location": "Aisle 8, Left",   "points": 100, "isPromo": True, "price": 2.99 },
+            { "id": "24", "name": "Butter",            "category": "Dairy",  "location": "Aisle 3, Center", "points": 100, "price": 4.49 },
+            { "id": "25", "name": "Vanilla Extract",   "category": "Baking", "location": "Aisle 8, Center", "points": 100, "price": 5.99 },
+        ],
+    }
 
-# generate a shopping list for the upcoming coupon hunt
-@app.post("/shoppinglist")
-def getShoppingList(data: ShoppingListRequest):
-    
-    # first, query snowflake for the last xyz purchases or typical purchases from this date
-    # generate a probability distribution of most likely purchases on today's date
-    # use parameter to randomly include additional/sponsored items in the specified supermarket
-    # return list of N items and their product information
-    
-    with open("mock_challenges.json") as f:
-        challenges = json.load(f)
-    
-    challenge = next((c for c in challenges if c["id"] == data.hunt_id), None)
-    if not challenge:
-        return {"status": "error", "message": "Challenge not found"}
-    
-    # Optionally customize per user
-    return {"status": "okay", "challenge": challenge}
-
-# generate a shopping list for the upcoming coupon hunt
+# ------------- POST /huntresult -------------
+# Expects: { "userId": "...", "shoppingCart": [ {id, name, ...}, ... ] }
+# For now: just echo it back.
 @app.post("/huntresult")
-def getShoppingList(data: HuntResult):
-    # update user profile with data
-    print(f"User {data.user_id} won {data.points} points")
-    return {"status": "okay"}
+def submit_hunt_result(payload: HuntResult):
+    # Echo back exactly what you sent, plus a status.
+    try:
+        echoed = payload.model_dump(by_alias=True)  # pydantic v2
+    except AttributeError:
+        echoed = payload.dict(by_alias=True)        # pydantic v1 fallback
+
+    return {
+        "status": "okay",
+        "data": echoed
+    }

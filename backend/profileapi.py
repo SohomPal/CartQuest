@@ -7,6 +7,10 @@ from snowflake.connector import DictCursor
 import os
 from contextlib import contextmanager
 import uuid
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI(title="Grocery Store User Profile API", version="1.0.0")
 
@@ -17,7 +21,8 @@ class UserProfile(BaseModel):
     first_name: str
     last_name: str
     points: int = 0
-    saved_store: str
+    created_at: datetime
+    updated_at: datetime
     
 
 class UserProfileCreate(BaseModel):
@@ -40,6 +45,7 @@ class Purchase(BaseModel):
     store_location: str
     total_amount: float
     items: List[dict]  # List of purchased items
+    purchase_date: datetime
     
 class PurchaseCreate(BaseModel):
     store_location: str

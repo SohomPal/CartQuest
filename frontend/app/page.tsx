@@ -1,27 +1,45 @@
 import { Header } from "@/components/header"
 import { ChallengeCard } from "@/components/challenge-card"
 import { mockChallenges } from "@/lib/stores"
+import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[var(--store-bg)]">
       <Header />
-      <main className="container px-4 py-8">
-        {/* Hero Section */}
-        <div className="mb-8 text-center space-y-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-balance bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] bg-clip-text text-transparent">
-            Your Shopping Challenges
-          </h2>
-          <p className="text-lg text-muted-foreground text-pretty max-w-2xl mx-auto">
-            Complete challenges to earn points and unlock rewards. Each challenge is personalized for your store.
-          </p>
+      <main>
+        <div className="relative overflow-hidden bg-gradient-to-r from-[var(--store-primary)] to-[var(--store-primary)]/85">
+          {/* Confetti pattern overlay */}
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23ffffff' fillOpacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
+
+          <div className="container relative px-4 py-12 md:py-16 text-center max-w-7xl mx-auto">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-balance">🏅 Welcome back, Risha!</h1>
+            <p className="text-lg md:text-xl text-white/90 mb-6 text-pretty max-w-2xl mx-auto">
+              Complete store challenges to earn points & exclusive coupons.
+            </p>
+            <Button
+              size="lg"
+              className="bg-white text-[var(--store-primary)] hover:brightness-95 font-semibold shadow-lg"
+            >
+              Start Shopping Quests
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
         </div>
 
         {/* Challenges Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockChallenges.map((challenge) => (
-            <ChallengeCard key={challenge.id} challenge={challenge} />
-          ))}
+        <div className="container px-4 py-8 md:py-12 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockChallenges.map((challenge) => (
+              <ChallengeCard key={challenge.id} challenge={challenge} />
+            ))}
+          </div>
         </div>
       </main>
     </div>

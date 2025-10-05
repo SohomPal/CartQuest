@@ -4,29 +4,34 @@ import { useState, useEffect } from "react"
 import { Camera, X } from "lucide-react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface BarcodeScannerProps {
   open: boolean
   onClose: () => void
   onScan: () => void
   itemName: string
+  itemPoints: number
 }
 
-export function BarcodeScanner({ open, onClose, onScan, itemName }: BarcodeScannerProps) {
+export function BarcodeScanner({ open, onClose, onScan, itemName, itemPoints }: BarcodeScannerProps) {
   const [scanning, setScanning] = useState(false)
+  const [barcodeInput, setBarcodeInput] = useState("")
 
   useEffect(() => {
     if (open) {
-      setScanning(true)
-      // Simulate barcode scan after 2 seconds
-      const timer = setTimeout(() => {
-        setScanning(false)
-        onScan()
-      }, 2000)
-
-      return () => clearTimeout(timer)
+      setScanning(false)
+      setBarcodeInput("")
     }
-  }, [open, onScan])
+  }, [open])
+
+  const handleSimulateScan = () => {
+    setScanning(true)
+    setTimeout(() => {
+      setScanning(false)
+      onScan()
+    }, 1500)
+  }
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -44,7 +49,8 @@ export function BarcodeScanner({ open, onClose, onScan, itemName }: BarcodeScann
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center text-white space-y-4">
                 <Camera className="h-16 w-16 mx-auto animate-pulse" />
-                <p className="text-lg font-medium">Scanning {itemName}...</p>
+                <p className="text-lg font-medium">{itemName}</p>
+                <p className="text-sm text-gray-400">+{itemPoints} pts</p>
                 {scanning && (
                   <div className="w-64 h-1 bg-white/20 rounded-full overflow-hidden mx-auto">
                     <div className="h-full bg-green-500 animate-scan-line" />
@@ -64,7 +70,26 @@ export function BarcodeScanner({ open, onClose, onScan, itemName }: BarcodeScann
             </div>
           </div>
 
-          <p className="text-sm text-muted-foreground text-center">Position the barcode within the frame to scan</p>
+          <div className="space-y-3">
+            <Input
+              placeholder="Enter barcode manually..."
+              value={barcodeInput}
+              onChange={(e) => setBarcodeInput(e.target.value)}
+              className="text-center font-mono"
+            />
+            <Button
+              onClick={handleSimulateScan}
+              disabled={scanning}
+              className="w-full bg-gradient-to-r from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] text-white"
+              size="lg"
+            >
+              {scanning ? "Scanning..." : "Simulate Scan"}
+            </Button>
+          </div>
+
+          <p className="text-sm text-muted-foreground text-center">
+            Position the barcode within the frame or use simulate scan
+          </p>
         </div>
       </DialogContent>
     </Dialog>

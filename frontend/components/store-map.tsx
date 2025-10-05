@@ -1,15 +1,16 @@
 "use client"
 
-import { X, MapPin } from "lucide-react"
+import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import type { ChallengeItem } from "@/lib/stores"
 
 interface StoreMapProps {
   isOpen: boolean
   onClose: () => void
-  highlightLocation?: string
+  challengeItems?: ChallengeItem[]
 }
 
-export function StoreMap({ isOpen, onClose, highlightLocation }: StoreMapProps) {
+export function StoreMap({ isOpen, onClose, challengeItems = [] }: StoreMapProps) {
   if (!isOpen) return null
 
   const sections = [
@@ -23,39 +24,67 @@ export function StoreMap({ isOpen, onClose, highlightLocation }: StoreMapProps) 
     { id: "health", name: "Health", position: "bottom-4 right-4", color: "bg-teal-500" },
   ]
 
+  const activeSections = new Set(
+    challengeItems
+      .map((item) => {
+        const location = item.location.toLowerCase()
+        if (location.includes("produce")) return "produce"
+        if (location.includes("dairy")) return "dairy"
+        if (location.includes("meat")) return "meat"
+        if (location.includes("bakery")) return "bakery"
+        if (location.includes("pantry") || location.includes("aisle")) return "pantry"
+        if (location.includes("snack")) return "snacks"
+        if (location.includes("beverage") || location.includes("drink")) return "beverages"
+        if (location.includes("health") || location.includes("pharmacy")) return "health"
+        return null
+      })
+      .filter(Boolean),
+  )
+
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 animate-in slide-in-from-bottom duration-300">
-      <div className="bg-background border-t-2 border-border shadow-2xl rounded-t-3xl overflow-hidden">
+      <div className="bg-white border-t-2 border-gray-200 shadow-2xl rounded-t-3xl overflow-hidden">
         <div className="p-6 space-y-4">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h3 className="text-2xl font-bold">Store Map</h3>
+            <h3 className="text-2xl font-bold text-gray-900">Store Map</h3>
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-5 w-5" />
             </Button>
           </div>
 
           {/* Map */}
-          <div className="relative h-96 bg-muted rounded-xl border-2 border-border overflow-hidden">
+          <div className="relative h-96 bg-gray-50 rounded-xl border-2 border-gray-200 overflow-hidden">
             {/* Grid Lines */}
             <div className="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-2 p-4">
               {Array.from({ length: 16 }).map((_, i) => (
-                <div key={i} className="border border-border/30 rounded" />
+                <div key={i} className="border border-gray-200 rounded" />
               ))}
             </div>
 
-            {/* Store Sections */}
+            {/* Store Sections with Glowing Orbs */}
             {sections.map((section) => {
-              const isHighlighted = highlightLocation?.toLowerCase().includes(section.name.toLowerCase())
+              const hasItems = activeSections.has(section.id)
               return (
                 <div key={section.id} className={`absolute ${section.position}`}>
-                  <div
-                    className={`${section.color} ${
-                      isHighlighted ? "ring-4 ring-yellow-400 scale-110" : ""
-                    } text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all`}
-                  >
-                    {isHighlighted && <MapPin className="h-4 w-4 animate-bounce" />}
-                    <span className="font-semibold text-sm">{section.name}</span>
+                  <div className="relative">
+                    {hasItems && (
+                      <div className="absolute -top-2 -right-2 z-10">
+                        <div className="relative">
+                          <div className={`w-4 h-4 ${section.color} rounded-full animate-glow-pulse`} />
+                          <div
+                            className={`absolute inset-0 ${section.color} rounded-full blur-md opacity-60 animate-glow-pulse`}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    <div
+                      className={`${section.color} ${
+                        hasItems ? "ring-2 ring-yellow-400 ring-offset-2" : ""
+                      } text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all`}
+                    >
+                      <span className="font-semibold text-sm">{section.name}</span>
+                    </div>
                   </div>
                 </div>
               )
@@ -67,9 +96,9 @@ export function StoreMap({ isOpen, onClose, highlightLocation }: StoreMapProps) 
             </div>
           </div>
 
-          {highlightLocation && (
-            <p className="text-sm text-center text-muted-foreground">
-              Item location: <span className="font-semibold text-foreground">{highlightLocation}</span>
+          {challengeItems.length > 0 && (
+            <p className="text-sm text-center text-gray-600">
+              Glowing sections contain items from your current challenge
             </p>
           )}
         </div>
