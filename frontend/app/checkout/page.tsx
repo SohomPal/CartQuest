@@ -74,25 +74,20 @@ export default function CheckoutPage() {
     }
   };
 
- const handleCompleteCheckout = async () => {
-    setShowConfetti(true)
+const handleCompleteCheckout = () => {
+  setShowConfetti(true)
 
-    // take a snapshot BEFORE any async/clearing
-    const pointsSnapshot = getTotalCartPoints()
-    setEarnedPoints(pointsSnapshot)
+  // snapshot points from current cart
+  const pointsSnapshot = getTotalCartPoints()
+  setEarnedPoints(pointsSnapshot)
 
-    try {
-      console.log(`Points snapsnot: ${pointsSnapshot}`)
-      await savePurchaseAndPoints(cart, pointsSnapshot, currentStore.name)
-      setCheckoutComplete(true)
-    } catch (error) {
-      console.error("Checkout failed:", error)
-      // still show success if you want that UX:
-      setCheckoutComplete(true)
-    } finally {
-      clearCart()
-    }
-  }
+  // ✅ award locally so Header updates immediately
+  addPoints(pointsSnapshot)
+
+  // mark done and clear cart
+  setCheckoutComplete(true)
+  clearCart()
+}
 
 if (checkoutComplete) {
     return (
