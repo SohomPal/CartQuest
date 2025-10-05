@@ -88,7 +88,7 @@ export function SwipeCard({ item, onSwipeLeft, onSwipeRight, onMap }: SwipeCardP
           {/* Item Image Section */}
           <div className="h-2/3 bg-gradient-to-br from-[var(--store-gradient-from)] to-[var(--store-gradient-to)] flex items-center justify-center relative">
             {item.isPromo && (
-              <div className="absolute top-6 right-6 z-10">
+              <div className="absolute top-6 right-6 z-20">
                 <div className="relative">
                   <div className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-gray-900 px-5 py-2.5 rounded-lg font-black text-sm shadow-xl border-2 border-amber-600">
                     <div className="flex items-center gap-2">
