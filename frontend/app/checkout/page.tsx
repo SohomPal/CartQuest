@@ -24,43 +24,65 @@ export default function CheckoutPage() {
     .map((char) => (char.charCodeAt(0) % 2 === 0 ? "1" : "0"))
     .join("")
 
-  const handleCompleteCheckout = async () => {
-    setShowConfetti(true);
-    addPoints(totalPoints);
-  
-    // Prepare the payload for the API request
-    const payload = {
-      userId: "rmm374",
-      items: cart.map((item) => ({
+  const savePurchaseAndPoints = async (cart: any[], totalPoints: number, storeLocation: string) => {
+    const purchasePayload = {
+      store_location: storeLocation,
+      total_amount: cart.reduce((sum: number, item: { price: number; quantity: number }) => sum + item.price * item.quantity, 0),
+      items: cart.map((item: { id: any; name: any; quantity: any; price: any }) => ({
         id: item.id,
         name: item.name,
-        quantity: 1,
+        quantity: item.quantity,
         price: item.price,
       })),
     };
-  
+
     try {
-      // Call the backend API to save the purchase
-      const response = await fetch("http://localhost:8080/huntresult", {
+      // Save the purchase
+      const purchaseResponse = await fetch("http://localhost:8000/users/rmm374/purchases", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(purchasePayload),
       });
-  
-      if (!response.ok) {
-        console.error("Failed to save purchase:", response.statusText);
+
+      if (!purchaseResponse.ok) {
+        throw new Error(`Failed to save purchase: ${purchaseResponse.statusText}`);
+      }
+
+      // Update points
+      const pointsPayload = {
+        points_change: totalPoints,
+        description: "Points earned from purchase",
+      };
+
+      const pointsResponse = await fetch("http://localhost:8000/users/rmm374/points", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pointsPayload),
+      });
+
+      if (!pointsResponse.ok) {
+        throw new Error(`Failed to update points: ${pointsResponse.statusText}`);
       }
     } catch (error) {
-      console.error("Error saving purchase:", error);
+      console.error("Error during checkout:", error);
+      throw error;
     }
-  
-    // Complete the checkout process
-    setTimeout(() => {
+  };
+
+  const handleCompleteCheckout = async () => {
+    setShowConfetti(true);
+
+    try {
+      await savePurchaseAndPoints(cart, totalPoints, currentStore.name);
       setCheckoutComplete(true);
       clearCart();
-    }, 1500);
+    } catch (error) {
+      console.error("Checkout failed:", error);
+    }
   };
 
   if (cart.length === 0) {
